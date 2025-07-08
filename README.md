@@ -1,13 +1,18 @@
 🧠 CIFAR-10 Image Classification using TensorFlow & Keras (Colab)
 This project demonstrates how to build and train a Convolutional Neural Network (CNN) to classify images from the CIFAR-10 dataset, which contains 10 classes of objects like airplanes, automobiles, cats, and more.
 
+#🔍 Features:
+Simple CNN built with Keras Sequential API
+Accuracy & loss plots over epochs
+Predict and visualize top predictions on test images
+
 ✅ The notebook is Colab-ready — you can run it directly without installing anything locally.
 
-📦 Project files
+📦 Project files:
 tf_cifar10_classification_colab.ipynb — main Jupyter notebook
 README.md — this guide
 
-🚀 How to use
+🚀 How to use:
 Go to Google Colab
 Upload tf_cifar10_classification_colab.ipynb
 Run each cell step by step:
@@ -17,24 +22,24 @@ Evaluate accuracy and plot learning curves
 Make predictions and visualize results
 The notebook will automatically download the CIFAR-10 dataset — no need to upload anything.
 
-🔍 Model overview
+🔍 Model overview:
 2 convolutional layers (32 & 64 filters)
 Max pooling
 Flatten + Dense layers
 Output layer with 10 classes (softmax)
 Trained for a few epochs on ~50,000 training images.
 
-📊 Results
+📊 Results:
 Accuracy over epochs plotted
 Final test accuracy printed
 Visualization of model predictions on sample images
 
-🧰 Libraries used
+🧰 Libraries used:
 TensorFlow / Keras
 NumPy
 Matplotlib
 
-✨ Possible extensions
+✨ Possible extensions:
 ✅ Use deeper / more advanced CNN
 ✅ Use data augmentation
 ✅ Deploy the trained model as a:
@@ -42,10 +47,10 @@ Matplotlib
   -API
 ✅ Try transfer learning with pre-trained models
 
-📫 Author / Credits
+📫 Author / Credits:
 Created as part of a deep learning mini project to learn image classification using TensorFlow.
 
-#Screenshots
+#Screenshots:
 ![Screenshot (66)](https://github.com/user-attachments/assets/907df992-0e15-4e53-aac8-b6c1c5a29615)
 ![Screenshot (67)](https://github.com/user-attachments/assets/28221a3c-4d0f-4ab3-a7b6-57a86ad37096)
 ![Screenshot (68)](https://github.com/user-attachments/assets/e1862987-8dc1-4241-9d96-7367a61a991a)
