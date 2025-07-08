@@ -1,53 +1,59 @@
-import streamlit as st
-import torch
-import torch.nn as nn
-import torchvision.transforms as transforms
-from PIL import Image
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.datasets import cifar10
+import matplotlib.pyplot as plt
+import numpy as np
 
-class CNN(nn.Module):
-    def __init__(self):
-        super(CNN, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2))
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3),
-            nn.ReLU(),
-            nn.MaxPool2d(2))
-        self.fc1 = nn.Linear(64 * 6 * 6, 100)
-        self.fc2 = nn.Linear(100, 10)
+print("✅ TensorFlow version:", tf.__version__)
+# Load CIFAR-10 dataset
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
-    def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
-        out = out.view(-1, 64 * 6 * 6)
-        out = self.fc1(out)
-        out = self.fc2(out)
-        return out
+# Normalize pixel values to [0, 1]
+x_train, x_test = x_train / 255.0, x_test / 255.0
 
-# Load model
-device = torch.device('cpu')
-model = CNN().to(device)
-model.load_state_dict(torch.load('model_weights.pth', map_location=device))
-model.eval()
+# Show some sample images
+class_names = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck']
 
-st.title("🧠 Handwritten Digit Classifier (PyTorch + Streamlit)")
-st.write("Upload an image of a single digit (28x28 px, black & white)")
+plt.figure(figsize=(10,5))
+for i in range(8):
+    plt.subplot(2,4,i+1)
+    plt.imshow(x_train[i])
+    plt.title(class_names[int(y_train[i])])
+    plt.axis('off')
+plt.tight_layout()
+plt.show()
+model = models.Sequential([
+    layers.Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),
+    layers.MaxPooling2D(2,2),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.MaxPooling2D(2,2),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
 
-uploaded_file = st.file_uploader("Choose an image...", type=["png", "jpg", "jpeg"])
+model.summary()
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-if uploaded_file is not None:
-    image = Image.open(uploaded_file).convert('L')
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+history = model.fit(x_train, y_train, epochs=5, validation_split=0.1)
+test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
+print(f"\n✅ Test accuracy: {test_acc*100:.2f}%")
 
-    transform = transforms.Compose([
-        transforms.Resize((28,28)),
-        transforms.ToTensor()
-    ])
-    img = transform(image).unsqueeze(0)
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Accuracy over epochs')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+predictions = model.predict(x_test[:5])
 
-    with torch.no_grad():
-        outputs = model(img)
-        _, predicted = torch.max(outputs.data, 1)
-        st.success(f"✅ Predicted Digit: **{predicted.item()}**")
+for i in range(5):
+    plt.imshow(x_test[i])
+    pred_label = class_names[np.argmax(predictions[i])]
+    true_label = class_names[int(y_test[i])]
+    plt.title(f"Predicted: {pred_label}, True: {true_label}")
+    plt.axis('off')
+    plt.show()
